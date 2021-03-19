@@ -1,17 +1,30 @@
-import { User } from './../models/userModels'
+import { Component } from 'react'
+import { NextPageContext } from 'next'
+import UserList from './../components/User/UserList'
+import { getUsers } from './../services/apiServices'
+import { ApiUsers } from './../models/apiModels'
 
-function About() {
-    let user: User = getUserData(8, 'Nut')
-    return <div>About {user.age} {user.name}ddd</div>
+interface Props {
+    users: ApiUsers
 }
 
-function getUserData(id: number, name: string): User {
-    let user: User = {
-        id,
-        name,
-        age: 25
+class UsersPage extends Component<Props> {
+    static async getInitialProps({ req }: NextPageContext) {
+        let users: ApiUsers
+        try {
+            users = await getUsers()
+        } catch (error) {
+            console.log(error)
+        }
+
+        return {
+            users
+        }
     }
-    return user
+
+    render() {
+        return <UserList {...this.props} />
+    }
 }
 
-export default About
+export default UsersPage
